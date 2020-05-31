@@ -1,0 +1,163 @@
+**************************************************
+	Category   		- Категория					**
+  ====================================			**
+	id,				- ID категорий				**
+	name,			- Название					**
+	description,	- Описание					**
+	parent_id,		- Надкатегория				**
+	created_at,		- Дата создания				**
+	updated_at,		- Дата обновления			**
+**************************************************
+
+CREATE TABLE category(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    parent_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX (name),
+    INDEX (created_at DESC),
+    FOREIGN KEY (parent_id)
+    	REFERENCES category(id)
+    	ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+-----------------------------------------------------
+
+********************************************
+	Product Type 	- Тип товара
+  =====================================
+  	id,				- ID типа
+  	name,			- Название
+  	created_at,		- Дата создания
+  	updated_at		- Дата обновления
+********************************************
+
+CREATE TABLE product_type(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX (created_at DESC),
+    INDEX (name)
+);
+
+-----------------------------------------------------
+
+********************************************
+	Product Brand 	- Брэнд
+  =====================================
+  	id,				- ID типа
+  	name,			- Название
+  	created_at,		- Дата создания
+  	updated_at		- Дата обновления
+********************************************
+
+CREATE TABLE product_brand(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX (name)
+);
+
+-----------------------------------------------------
+
+************************************************
+	Product 		- Товар 				****
+  ======================================	****
+  	id,				- ID товара				****
+  	name,			- Название				****
+  	num_cl, 		- Номенклатура			****
+  	desrciption,	- Описание				****
+  	status, 		- Статус				****
+  	rating,			- Рэйтинг				****
+  	price_tr,		- Оптовая цена			****
+  	price_re,		- Розничная цена		****
+  	type_id,		- Тип товара			****
+  	category_id,	- Категория				****
+  	brand_id		- Брэнд					****
+************************************************
+
+CREATE TABLE product(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    num_cl VARCHAR(255),
+    description TEXT,
+    status TINYINT(1) DEFAULT 1 NOT NULL,
+    rating FLOAT DEFAULT 3,
+    price_tr INT NOT NULL,
+    price_re INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    type_id INT NOT NULL,
+    category_id INT NOT NULL,
+    brand_id INT NOT NULL,
+    FOREIGN KEY (type_id)
+    	REFERENCES product_type(id)
+    	ON UPDATE RESTRICT ON DELETE CASCADE,
+    FOREIGN KEY (category_id)
+    	REFERENCES category(id)
+    	ON UPDATE RESTRICT ON DELETE CASCADE,
+    FOREIGN KEY (brand_id)
+    	REFERENCES product_brand(id)
+    	ON UPDATE RESTRICT ON DELETE CASCADE,
+    INDEX (name)
+);
+
+-----------------------------------------------------
+
+*****************************************************
+	Product Attribute 	- Атрибут товара
+  =============================================
+  	id,					- ID атрибута
+  	name,				- Название
+  	col_name,			- Название в таблице
+  	type,				- Тип
+  	type_id				- Тип товара
+*****************************************************
+
+CREATE TABLE product_attribute(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    col_name VARCHAR(255) NOT NULL,
+    type ENUM('text', 'int', 'float', 'bool') NOT NULL,
+    type_id INT NOT NULL,
+    INDEX (name),
+    FOREIGN KEY (type_id)
+    	REFERENCES product_type(id)
+    	ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+-----------------------------------------------------
+
+**************************************************************
+	Attribute Value 	- Значение атрибута
+  ========================================
+  	id,					- ID значения
+  	value_text,			- Поле для текстовых значений
+  	value_int,			- Поле для целочисленных значений
+  	value_float,		- Поле для дробных значений
+  	value_bool,			- Поле для булевых значений
+  	attr_id,			- Атрибут
+  	product_id			- Товар
+**************************************************************
+
+CREATE TABLE attribute_value(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    value_text VARCHAR(255) NULL,
+    value_int INT NULL,
+    value_float FLOAT NULL,
+    value_bool BOOLEAN NULL,
+    attr_id INT NOT NULL,
+    product_id INT NOT NULL,
+    FOREIGN KEY (attr_id)
+    	REFERENCES product_attribute (id)
+    	ON UPDATE RESTRICT ON DELETE CASCADE,
+    FOREIGN KEY (product_id)
+    	REFERENCES product (id)
+    	ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+-----------------------------------------------------
