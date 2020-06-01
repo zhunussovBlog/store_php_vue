@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $dbname = 'store';
-$user = 'myadmin';
+$user = 'admin';
 $password = '1234';
 
 try {

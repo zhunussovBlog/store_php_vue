@@ -15,7 +15,7 @@ CREATE TABLE category(
     description TEXT,
     parent_id INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     INDEX (name),
     INDEX (created_at DESC),
     FOREIGN KEY (parent_id)
@@ -38,7 +38,7 @@ CREATE TABLE product_type(
 	id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     INDEX (created_at DESC),
     INDEX (name)
 );
@@ -58,7 +58,7 @@ CREATE TABLE product_brand(
 	id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     INDEX (name)
 );
 
@@ -70,9 +70,9 @@ CREATE TABLE product_brand(
   	id,				- ID товара				****
   	name,			- Название				****
   	num_cl, 		- Номенклатура			****
-  	desrciption,	- Описание				****
+  	description,	- Описание				****
   	status, 		- Статус				****
-  	rating,			- Рэйтинг				****
+  	rating,			- Рейтинг				****
   	price_tr,		- Оптовая цена			****
   	price_re,		- Розничная цена		****
   	type_id,		- Тип товара			****
@@ -90,10 +90,10 @@ CREATE TABLE product(
     price_tr INT NOT NULL,
     price_re INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     type_id INT NOT NULL,
     category_id INT NOT NULL,
-    brand_id INT NOT NULL,
+    brand_id INT NULL,
     FOREIGN KEY (type_id)
     	REFERENCES product_type(id)
     	ON UPDATE RESTRICT ON DELETE CASCADE,
@@ -113,7 +113,6 @@ CREATE TABLE product(
   =============================================
   	id,					- ID атрибута
   	name,				- Название
-  	col_name,			- Название в таблице
   	type,				- Тип
   	type_id				- Тип товара
 *****************************************************
@@ -121,7 +120,6 @@ CREATE TABLE product(
 CREATE TABLE product_attribute(
 	id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    col_name VARCHAR(255) NOT NULL,
     type ENUM('text', 'int', 'float', 'bool') NOT NULL,
     type_id INT NOT NULL,
     INDEX (name),

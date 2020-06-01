@@ -1,21 +1,21 @@
 <?php
 
+include_once 'Model.php';
 
-class Category
+class Category extends Model
 {
   private $conn;
 
   public $id, $name, $description, $parent_id, $created_at, $updated_at;
 
-  public function __construct($pdo)
+  public function __construct(PDO $pdo)
   {
     $this->conn = $pdo;
   }
 
   public function read()
   {
-    $query = 'SELECT * FROM category ORDER BY created_at DESC';
-    return $this->conn->query($query);
+    return $this->conn->query('SELECT * FROM category');
   }
 
   public function create()
@@ -39,23 +39,17 @@ class Category
                 name = :name,
                 description = :description,
                 parent_id = :parent_id,
-                created_at = :created_at,
-                updated_at = DEFAULT(updated_at)
+                updated_at = CURRENT_TIME()
               WHERE id = :id';
     $stmt = $this->conn->prepare($query);
 
+    $this->id = $this->cleanField($this->id);
     $this->name = $this->cleanField($this->name);
     $this->description = $this->cleanField($this->description);
     $this->parent_id = $this->cleanField($this->parent_id);
-    $this->created_at = $this->cleanField($this->created_at);
 
-    try {
-      return $stmt->execute(['id' => $this->id, 'name' => $this->name, 'description' => $this->description,
-        'parent_id' => $this->parent_id, 'created_at' => $this->created_at]);
-    } catch (PDOException $e) {
-      echo $e->getMessage();
-      die();
-    }
+    return $stmt->execute(['id' => $this->id, 'name' => $this->name, 'description' => $this->description,
+      'parent_id' => $this->parent_id]);
   }
 
   public function readOne()
@@ -65,12 +59,19 @@ class Category
 
     $this->id = $this->cleanField($this->id);
 
-    return $stmt->execute(['id' => $this->id]);
+    $stmt->execute(['id' => $this->id]);
+
+    return $stmt;
   }
 
-  private function cleanField($field)
+  public function delete()
   {
-    if ($field) return htmlspecialchars(strip_tags($field));
-    return null;
+    $query = 'DELETE FROM category WHERE id = :id';
+
+    $stmt = $this->conn->prepare($query);
+
+    $this->id = $this->cleanField($this->id);
+
+    return $stmt->execute(['id' => $this->id]);
   }
 }

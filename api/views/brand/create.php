@@ -3,21 +3,19 @@ header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 header('Access-Control-Allow-Methods: POST');
 include_once 'settings.php';
 
-$category = new Category($pdo);
+$brand = new Brand($pdo);
 
 if (!empty($data['name'])) {
-  $category->name = $data['name'];
-  $category->description = $data['description'] ?? null;
-  $category->parent_id = $data['parent_id'] ?? null;
+  $brand->name = $data['name'];
 
-  if ($category->create()) {
+  if ($brand->create()) {
     http_response_code(201);
 
-    echo json_encode(['message' => 'Category is created']);
+    echo json_encode(['message' => 'Brand is created']);
   } else {
     http_response_code(503);
 
-    echo json_encode(['message' => 'Unable to create category'], JSON_UNESCAPED_UNICODE);
+    echo json_encode(['message' => 'Unable to create brand'], JSON_UNESCAPED_UNICODE);
   }
 } else {
   http_response_code(400);
